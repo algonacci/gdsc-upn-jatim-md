@@ -66,6 +66,7 @@ class _StreamingPageState extends State<StreamingPage> {
               data: message,
               styleSheet:
                   MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(
+                textAlign: WrapAlignment.start,
                 p: TextStyle(
                   fontSize: 16,
                   height: 1.5,
