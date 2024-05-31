@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'chat_response.dart';
 
 class StreamingPage extends StatefulWidget {
@@ -25,7 +26,7 @@ class _StreamingPageState extends State<StreamingPage> {
     if (text.isNotEmpty) {
       setState(() {
         _messages.add('You: $text');
-        _messages.add('Bot: ');
+        _messages.add('Bot: '); // Placeholder for bot response
       });
 
       var response = '';
@@ -42,9 +43,7 @@ class _StreamingPageState extends State<StreamingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Chat with Bot',
-        ),
+        title: Text('Chat with Bot'),
       ),
       body: Column(
         children: [
@@ -59,9 +58,22 @@ class _StreamingPageState extends State<StreamingPage> {
     return Expanded(
       child: ListView.builder(
         itemCount: _messages.length,
-        itemBuilder: (context, index) => ListTile(
-          title: Text(_messages[index]),
-        ),
+        itemBuilder: (context, index) {
+          // Ensure new lines are correctly interpreted
+          String message = _messages[index].replaceAll('\\n', '\n');
+          return ListTile(
+            title: MarkdownBody(
+              data: message,
+              styleSheet:
+                  MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(
+                p: TextStyle(
+                  fontSize: 16,
+                  height: 1.5,
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
