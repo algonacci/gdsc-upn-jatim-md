@@ -12,7 +12,6 @@ class StreamingPage extends StatefulWidget {
 class _StreamingPageState extends State<StreamingPage> {
   final TextEditingController _controller = TextEditingController();
   final List<String> _messages = [];
-  String _currentStream = '';
 
   @override
   void dispose() {
@@ -32,11 +31,9 @@ class _StreamingPageState extends State<StreamingPage> {
 
       var response = '';
       getChatResponse(text).listen((word) {
-        _currentStream = '$_currentStream${word.text}';
-        // print('_currentStream $_currentStream');
         setState(() {
-          // response += word;
-          _messages[_messages.length-1] = 'Bot: $_currentStream';
+          response += word;
+          _messages[_messages.length - 1] = 'Bot: $response';
         });
       });
     }
@@ -58,46 +55,29 @@ class _StreamingPageState extends State<StreamingPage> {
   }
 
   Widget _buildMessages() {
-  return Expanded(
-    child: ListView.builder(
-      itemCount: _messages.length,
-      itemBuilder: (context, index) {
-        String message = _messages[index];
-        bool isUserMessage = message.startsWith('You: ');
-        
-        
-        if (isUserMessage) {
+    return Expanded(
+      child: ListView.builder(
+        itemCount: _messages.length,
+        itemBuilder: (context, index) {
+          // Ensure new lines are correctly interpreted
+          String message = _messages[index].replaceAll('\\n', '\n');
           return ListTile(
-            title: Text(message),
-          );
-        } else {
-          // Remove the 'Bot: ' prefix for markdown rendering
-          // message = message.replaceFirst('Bot: ', '');
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: MarkdownBody(
+            title: MarkdownBody(
               data: message,
-              styleSheet: MarkdownStyleSheet(
-                // p: TextStyle(fontSize: 16, height: 1.5),
-                // strong: TextStyle(fontWeight: FontWeight.bold),
-                // listBullet: TextStyle(fontSize: 16),
-                // blockSpacing: 8,
-                // listIndent: 20,
-                // listBulletPadding: EdgeInsets.only(right: 8),
+              styleSheet:
+                  MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(
+                textAlign: WrapAlignment.start,
+                p: TextStyle(
+                  fontSize: 16,
+                  height: 1.5,
+                ),
               ),
-              // builders: {
-              //   'p': (_, child) => Padding(
-              //     padding: EdgeInsets.only(bottom: 8),
-              //     child: child,
-              //   ),
-              // },
             ),
           );
-        }
-      },
-    ),
-  );
-}
+        },
+      ),
+    );
+  }
 
   Widget _buildUserInput() {
     return Container(
