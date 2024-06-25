@@ -16,8 +16,7 @@ Stream<String> getChatResponse(String content) async* {
 
   var streamedResponse = await request.send();
 
-  await for (var line in streamedResponse.stream
-      .transform(utf8.decoder)) {
+  await for (var line in streamedResponse.stream.transform(utf8.decoder)) {
     for (var word in line.split('')) {
       await Future.delayed(Duration(milliseconds: 10));
       yield word + '';
