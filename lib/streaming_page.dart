@@ -12,6 +12,7 @@ class StreamingPage extends StatefulWidget {
 class _StreamingPageState extends State<StreamingPage> {
   final TextEditingController _controller = TextEditingController();
   final List<String> _messages = [];
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -27,6 +28,7 @@ class _StreamingPageState extends State<StreamingPage> {
       setState(() {
         _messages.add('You: $text');
         _messages.add('Bot: '); // Placeholder for bot response
+        _isLoading = true; // Start loading
       });
 
       var response = '';
@@ -34,6 +36,10 @@ class _StreamingPageState extends State<StreamingPage> {
         setState(() {
           response += word;
           _messages[_messages.length - 1] = 'Bot: $response';
+        });
+      }).onDone(() {
+        setState(() {
+          _isLoading = false; // Stop loading when response is done
         });
       });
     }
@@ -48,6 +54,7 @@ class _StreamingPageState extends State<StreamingPage> {
       body: Column(
         children: [
           _buildMessages(),
+          if (_isLoading) LinearProgressIndicator(),
           _buildUserInput(),
         ],
       ),
